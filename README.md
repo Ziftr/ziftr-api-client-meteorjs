@@ -17,23 +17,70 @@ meteor add ziftr/ziftr-api
 The following call will fetch all orders for the API keys' owner. Be sure to pass configuration data as shown.
 
 ```
-var configuration = {
+// Set the configuration
+ZiftrApi.config({
   "keys": {
-    "publishable_key" : "",
-    "private_key"     : ""
+    "publishable_key" : "pub_xxxxxxxxxxxxxxxxxxx",
+    "private_key"     : "prv_xxxxxxxxxxxxxxxxxxx"
   },
   "api_version": "0.1",
   "api_host": "http://sandbox.fpa.bz/"
-}
+})
 
-ZiftrApi.get("orders", configuration)
+// Fetch the list of orders
+ZiftrApi.get("orders")
   .then(function(response){
     console.log(response.body.orders);
   })
   .catch(function(error){
     console.log(error);
   });
+
+// Insert a new order
+ZiftrApi.post("orders", {
+  data: {
+    order: {
+      currency_code: "USD",
+      is_shipping_required: true,
+      shipping_price: "2000"
+    }
+  }
+})
+  .then(function(response){
+    console.log(response.body.orders);
+  })
+  .catch(function(error){
+    console.log(error);
+  })
+
 ```
+
+## Configuration object
+
+The config object describes the request options used to send the request.
+
+### `keys.publishable_key`
+
+Required.
+Your ZiftrPAY API Public Key from the
+[ZiftrPAY account info](https://www.ziftrpay.com/merchants/sandbox/info/) page
+
+### `keys.private_key`
+
+Required.
+Your ZiftrPAY API Private Key from the
+[ZiftrPAY account info](https://www.ziftrpay.com/merchants/sandbox/info/) page
+
+### `api_version`
+
+The version of the Ziftr API such as `0.1`.
+
+### `api_host`
+
+The hostname of the api endpoint:
+
+* `http://sandbox.fpa.bz/`
+* `http://api.fpa.bz/`
 
 ## Links
 
