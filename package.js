@@ -3,7 +3,7 @@
 
 Package.describe({
   name: 'ziftr:ziftr-api',
-  version: '0.1.0',
+  version: '0.1.0-beta.1',
   summary: 'ZiftrPAY API package for Meteor',
   git: 'https://github.com/Ziftr/ziftr-api-client-meteorjs',
   documentation: 'README.md'
