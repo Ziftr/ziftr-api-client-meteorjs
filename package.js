@@ -22,5 +22,5 @@ Package.onTest(function(api) {
 });
 
 Npm.depends({
-  "ziftr-api-client-nodejs": "https://github.com/Ziftr/ziftr-api-client-nodejs/archive/51a5f0fa038e0070e97b7580c65c6b6400301e1a.tar.gz",
+  "ziftr-api-client-nodejs": "https://github.com/Ziftr/ziftr-api-client-nodejs/archive/6a2b7893913d7216ec2a23d6b142db313114a61d.tar.gz",
 });
