@@ -17,7 +17,7 @@ meteor add ziftr/ziftr-api
 The following call will fetch all orders for the API keys' owner. Be sure to pass configuration data as shown.
 
 ```
-// Set the configuration
+// Set the configuration (must happen first)
 ZiftrApi.config({
   "keys": {
     "publishable_key" : "pub_xxxxxxxxxxxxxxxxxxx",
@@ -28,16 +28,16 @@ ZiftrApi.config({
 })
 
 // Fetch the list of orders
-ZiftrApi.get("orders")
-  .then(function(response){
-    console.log(response.body.orders);
-  })
-  .catch(function(error){
-    console.log(error);
-  });
+try{
+  var response = ZiftrApi.get("orders");
+  console.log(response.body.orders);
+}
+catch(err){
+  console.log(error);
+}
 
 // Insert a new order
-ZiftrApi.post("orders", {
+var response = ZiftrApi.post("orders", {
   data: {
     order: {
       currency_code: "USD",
@@ -45,14 +45,19 @@ ZiftrApi.post("orders", {
       shipping_price: "2000"
     }
   }
-})
-  .then(function(response){
-    console.log(response.body.orders);
-  })
-  .catch(function(error){
-    console.log(error);
-  })
+});
+```
 
+## Meteor.methods
+
+When using this in `Meteor.methods()`, you must use the wrapped version:
+
+```
+Meteor.methods({
+  my_method: function(){
+    var ordersResp = ZiftrApi.getWrapAsync("orders", null);
+  },
+});
 ```
 
 ## Configuration object
@@ -73,7 +78,7 @@ Your ZiftrPAY API Private Key from the
 
 ### `api_version`
 
-The version of the Ziftr API such as `0.1`.
+The version of the Ziftr API you wish to use such as `0.1`.
 
 ### `api_host`
 
