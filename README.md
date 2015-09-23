@@ -9,7 +9,7 @@ This branch is under active development and should not be considered stable for 
 ## Installation
 
 ```
-meteor add ziftr/ziftr-api
+meteor add ziftr:ziftr-api
 ```
 
 ## Usage
