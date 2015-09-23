@@ -20,11 +20,11 @@ The following call will fetch all orders for the API keys' owner. Be sure to pas
 // Set the configuration (must happen first)
 ZiftrApi.config({
   "keys": {
-    "publishable_key" : "pub_xxxxxxxxxxxxxxxxxxx",
-    "private_key"     : "prv_xxxxxxxxxxxxxxxxxxx"
+    "publishable_key" : "pub_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "private_key"     : "prv_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   },
-  "api_version": "0.1",
-  "api_host": "http://sandbox.fpa.bz/"
+  "api_version" : "0.1",
+  "api_host"    : "http://sandbox.fpa.bz/"
 })
 
 // Fetch the list of orders
@@ -68,13 +68,22 @@ The config object describes the request options used to send the request.
 
 Required.
 Your ZiftrPAY API Public Key from the
-[ZiftrPAY account info](https://www.ziftrpay.com/merchants/sandbox/info/) page
+[ZiftrPAY account info](https://www.ziftrpay.com/merchants/sandbox/info/) page.
+
+The type of key (live or sandbox) you use must match the URL you use.
+See `api_host` for more information.
 
 ### `keys.private_key`
 
 Required.
 Your ZiftrPAY API Private Key from the
-[ZiftrPAY account info](https://www.ziftrpay.com/merchants/sandbox/info/) page
+[ZiftrPAY account info](https://www.ziftrpay.com/merchants/sandbox/info/) page.
+
+The private key is not needed for all API routes. It is advised you do not use
+the private key if you don't have to.
+
+The type of key (live or sandbox) you use must match the URL you use.
+See `api_host` for more information.
 
 ### `api_version`
 
@@ -84,8 +93,8 @@ The version of the Ziftr API you wish to use such as `0.1`.
 
 The hostname of the api endpoint:
 
-* `http://sandbox.fpa.bz/`
-* `http://api.fpa.bz/`
+* `http://sandbox.fpa.bz/` : Used with sandbox API keys and not for using in production systems.
+* `http://api.fpa.bz/` : Used with live API keys and for use in production systems.
 
 ## Links
 
