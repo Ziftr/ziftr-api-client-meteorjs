@@ -18,7 +18,12 @@ var prase_request_error = function _ZiftrApiParseRequestError(config, error){
 
   if (error_data.configuration.keys) { delete error_data.configuration.keys; }
 
-  return new ZiftrApi.RequestError(error.response.data.error.message, error_data, null, _ZiftrApiParseRequestError);
+  var message = error.response.data.error.message;
+  if (error_data.fields) {
+    message += '; fields: '+JSON.stringify(error_data.fields);
+  }
+
+  return new ZiftrApi.RequestError(message, error_data, null, _ZiftrApiParseRequestError);
 };
 
 var requestLog = function _ZiftrApiRequestLog(config /* , message, ... */){
