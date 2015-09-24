@@ -6,9 +6,13 @@ var defineError = function _ZiftrApiDefineError(name, defaultData){
 
   var Err = function _ZiftrApiCustomError(message, data, inner, stackTraceContext) {
 
-    if (data instanceof Array || typeof data !== 'object') {
+    if (data == null) {
+      // Intentionally empty
+    }
+    else if (data instanceof Array || typeof data !== 'object') {
       this.data = data;
-    } else {
+    }
+    else {
       var self = this;
       Object.keys(defaultData).forEach(function(key){ self[key] = defaultData[key]; });
       Object.keys(data).forEach(function(key){ self[key] = data[key]; });
