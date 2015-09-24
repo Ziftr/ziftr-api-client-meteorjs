@@ -12,11 +12,17 @@ var prase_request_error = function _ZiftrApiParseRequestError(config, error){
     configuration: ZiftrApi.mergeObjs(config), // Clone,
     code: error.response.statusCode,
     fields: error.response.data.error.fields,
-    // headers: error.response.headers,
-    // response: error.response,
   };
 
-  if (error_data.configuration.keys) { delete error_data.configuration.keys; }
+  // Intentionally obfuscate keys, but only if they are included
+  if (error_data.configuration.keys) {
+    if (error_data.configuration.keys.publishable_key) {
+      error_data.configuration.keys.publishable_key = 'pub_********************************';
+    }
+    if (error_data.configuration.keys.private_key) {
+      error_data.configuration.keys.private_key = 'prv_****************************************************************';
+    }
+  }
 
   var message = error.response.data.error.message;
   if (error_data.fields) {
