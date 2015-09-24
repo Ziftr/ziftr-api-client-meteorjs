@@ -84,37 +84,41 @@ ZiftrApi.request = function ZiftrApiRequest(method, url_path, config, callback){
 
   config = ZiftrApi.mergeObjs(ZiftrApi.config(), config);
 
+  var on_error = function ZiftrApiRequestOnError(err){
+    if (typeof(callback) === 'function') {
+      callback(err);
+      return false;
+    }
+    else {
+      throw err;
+    }
+  };
+
   // validate that options is present
   if(config === undefined || !config) {
-    callback(new ZiftrApi.InvalidConfigError("Missing ZiftrApi configuration"));
-    return false;
+    return on_error(new ZiftrApi.InvalidConfigError("Missing ZiftrApi configuration"));
   }
 
   // validate that the pub and prv keys are present
   if (config.keys === undefined) {
-    callback(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.keys"));
-    return false;
+    return on_error(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.keys"));
   }
 
   if (config.keys.publishable_key === undefined) {
-    callback(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.keys.publishable_key"));
-    return false;
+    return on_error(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.keys.publishable_key"));
   }
 
   if (config.keys.private_key === undefined) {
-    callback(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.keys.private_key"));
-    return false;
+    return on_error(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.keys.private_key"));
   }
 
   // validate that the host version is set, and that we have an api_host
   if(config.api_version === undefined) {
-    callback(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.api_version"));
-    return false;
+    return on_error(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.api_version"));
   }
 
   if(config.api_host === undefined) {
-    callback(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.api_host"));
-    return false;
+    return on_error(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.api_host"));
   }
 
   var accept_version = config.api_version.replace('.','-');
