@@ -1,4 +1,4 @@
-/* global Package, Npm */
+/* global Package */
 "use strict";
 
 Package.describe({
@@ -33,8 +33,4 @@ Package.onUse(function(api) {
 //   api.use('tinytest');
 //   api.use('ziftr:ziftr-api');
 //   api.addFiles('src/ziftr-api-tests.js', 'server');
-// });
-
-// Npm.depends({
-// //   "ziftr-api-client-nodejs": "https://github.com/Ziftr/ziftr-api-client-nodejs/archive/6a2b7893913d7216ec2a23d6b142db313114a61d.tar.gz",
 // });
