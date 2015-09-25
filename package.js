@@ -23,6 +23,7 @@ Package.onUse(function(api) {
   api.addFiles('src/ZiftrApi.config.js', 'server');
   api.addFiles('src/ZiftrApi.getSignature.js', 'server');
   api.addFiles('src/ZiftrApi.getVersion.js', 'server');
+  api.addFiles('src/ZiftrApi.Logger.js', 'server');
   api.addFiles('src/ZiftrApi.mergeObjs.js', 'server');
   api.addFiles('src/ZiftrApi.request.js', 'server');
   api.addFiles('src/ZiftrApi-errors.js', 'server');

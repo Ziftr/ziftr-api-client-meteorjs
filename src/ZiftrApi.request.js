@@ -9,7 +9,7 @@ var string_to_base64 = function _ZiftrApiStringToBase64(string){
 var prase_request_error = function _ZiftrApiParseRequestError(config, error){
 
   var error_data = {
-    configuration: ZiftrApi.mergeObjs(config), // Clone,
+    configuration: JSON.parse(JSON.stringify(config)), // deep clone,
     code: error.response.statusCode,
     fields: error.response.data.error.fields,
   };
@@ -32,29 +32,12 @@ var prase_request_error = function _ZiftrApiParseRequestError(config, error){
   return new ZiftrApi.RequestError(message, error_data, null, _ZiftrApiParseRequestError);
 };
 
-var requestLog = function _ZiftrApiRequestLog(config /* , message, ... */){
-  if (config.debug !== true) { return; }
-
-  var args = Array.prototype.slice.apply(arguments);
-  args.shift(); // config
-  args.unshift('ZiftrApi');
-  console.log.apply(console, args);
-};
-
-// ZiftrApi << POST http://sandbox.fpa.bz/orders
-requestLog.send = function _ZiftrApiRequestLogSend(config, method, url){
-  requestLog(config, '<<', method, url);
-};
-
-// ZiftrApi >> POST http://sandbox.fpa.bz/orders >> 301 { <response body> }
-requestLog.resp = function _ZiftrApiRequestLogResp(config, method, url, response){
-  requestLog(config, '>>', method, url, '>>', response.statusCode, JSON.stringify(response));
-};
-
-// ZiftrApi >> POST http://sandbox.fpa.bz/orders >> 301 { <response error> }
-requestLog.err = function _ZiftrApiRequestLogErr(config, method, url, err){
-  var statusCode = err && (err.statusCode || err.status || err.code);
-  requestLog(config, '>>', method, url, '>> Error:', statusCode, err.message, JSON.stringify(err));
+var normalize_url = function _ZiftrApiNormalizeUrl(url) {
+  return url
+    .replace(/[\/]+/g, '/')
+    .replace(/\/\?/g, '?')
+    .replace(/\/\#/g, '#')
+    .replace(/\:\//g, '://');
 };
 
 /**
@@ -62,7 +45,7 @@ requestLog.err = function _ZiftrApiRequestLogErr(config, method, url, err){
  *
  * @param {string}  method  The HTTP method for this request, for example
  *                          "GET", "POST", "PATCH", "DELETE"
- * @param {string}  url_path  The path part of the url.
+ * @param {string}  url_path  The path and query string part of the url.
  * @param {object}  options  (optional) A list of options that are merged with
  *                           the config and matches that format.
  * @param {ZiftrApi~requestCallback}  callback  A function that is called when the request completes or errors.
@@ -94,6 +77,7 @@ ZiftrApi.request = function ZiftrApiRequest(method, url_path, config, callback){
   }
 
   config = ZiftrApi.mergeObjs(ZiftrApi.config(), config);
+  config = JSON.parse(JSON.stringify(config)); // deep clone
 
   var on_error = function ZiftrApiRequestOnError(err){
     if (typeof(callback) === 'function') {
@@ -132,11 +116,11 @@ ZiftrApi.request = function ZiftrApiRequest(method, url_path, config, callback){
     return on_error(new ZiftrApi.InvalidConfigError("Missing ZiftrApi config.api_host"));
   }
 
+  url_path = ('/' + normalize_url(url_path)).replace(/^\/+/g, '/');
+
   var accept_version = config.api_version.replace('.','-');
-  var url_path_parts = url_path.split('?');
-  var qs = url_path_parts.length > 1 ? url_path_parts[1] : '';
-  var path = url_path_parts.length > 1 ? url_path_parts[0] + '?' : url_path_parts[0];
-  var signature = ZiftrApi.getSignature(path, config.keys.publishable_key, config.keys.private_key, qs);
+  var request_time = new Date();
+  var signature = ZiftrApi.getSignature(url_path, config.keys.publishable_key, config.keys.private_key, request_time);
 
   var request_headers = {
     'Content-Type': 'application/json',
@@ -145,7 +129,13 @@ ZiftrApi.request = function ZiftrApiRequest(method, url_path, config, callback){
     'User-Agent': 'Ziftr%20API%Meteor%20Client%20'+ ZiftrApi.getVersion(),
   };
 
+  ZiftrApi.logger.write('#request url_path (normalized) =>', url_path);
+  ZiftrApi.logger.write('#request time =>', request_time);
+  ZiftrApi.logger.write('#request signature =>', signature);
+  ZiftrApi.logger.write('#request header[ Accept ] => ', request_headers.Accept);
+
   var url = config.api_host + url_path;
+  url = normalize_url(url);
 
   var request_options = {
     uri: config.api_host + url_path,
@@ -160,7 +150,7 @@ ZiftrApi.request = function ZiftrApiRequest(method, url_path, config, callback){
     request_options.data = config.data;
   }
 
-  requestLog.send(config, method, url);
+  ZiftrApi.logger.onRequestSend(method, url, request_options.data);
 
   if (typeof(callback) === 'function') {
     // Run asynchronously
@@ -168,11 +158,11 @@ ZiftrApi.request = function ZiftrApiRequest(method, url_path, config, callback){
     HTTP.call(method, url, request_options, function(error, response){
       if (error) {
         var parsedErr = prase_request_error(config, error);
-        requestLog.err(config, method, url, parsedErr);
+        ZiftrApi.logger.onRequestErr(method, url, parsedErr);
         return callback(parsedErr);
       }
 
-      requestLog.resp(config, method, url, response);
+      ZiftrApi.logger.onRequestResp(method, url, response);
 
       return callback(null, response);
     });
@@ -183,12 +173,12 @@ ZiftrApi.request = function ZiftrApiRequest(method, url_path, config, callback){
 
     try {
       var response = HTTP.call(method, url, request_options);
-      requestLog.resp(config, method, url, response);
+      ZiftrApi.logger.onRequestResp(method, url, response);
       return response;
     }
     catch(err){
       var parsedErr = prase_request_error(config, err);
-      requestLog.err(config, method, url, parsedErr);
+      ZiftrApi.logger.onRequestErr(method, url, parsedErr);
       throw parsedErr;
     }
   }
