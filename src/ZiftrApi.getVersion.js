@@ -2,5 +2,5 @@
 "use strict";
 
 ZiftrApi.getVersion = function ZiftrApiGetVersion(){
-  return '0.1.0-beta.3';
+  return '0.1.0-beta.4';
 };
