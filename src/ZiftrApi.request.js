@@ -11,7 +11,9 @@ var prase_request_error = function _ZiftrApiParseRequestError(config, error){
   var error_data = {
     configuration: JSON.parse(JSON.stringify(config)), // deep clone,
     code: error.response.statusCode,
-    fields: error.response.data.error.fields,
+    fields: ( error.response.data &&
+              error.response.data.error &&
+              error.response.data.error.fields ),
   };
 
   // Intentionally obfuscate keys, but only if they are included
@@ -24,9 +26,12 @@ var prase_request_error = function _ZiftrApiParseRequestError(config, error){
     }
   }
 
-  var message = error.response.data.error.message;
-  if (error_data.fields) {
-    message += '; fields: '+JSON.stringify(error_data.fields);
+  var message = 'No response from api';
+  if (error.response.data && error.response.data.error) {
+    message = error.response.data.error.message;
+    if (error_data.fields) {
+      message += '; fields: '+JSON.stringify(error_data.fields);
+    }
   }
 
   return new ZiftrApi.RequestError(message, error_data, null, _ZiftrApiParseRequestError);
