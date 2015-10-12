@@ -20,7 +20,9 @@ The following call will fetch all orders for the API keys' owner. Be sure to pas
 // Set the configuration (must happen first)
 ZiftrApi.config({
   "keys": {
+    // Replace each key with your real keys
     "publishable_key" : "pub_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    // The private key is not required for all operations
     "private_key"     : "prv_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   },
   "api_version" : "0.1",
@@ -75,7 +77,7 @@ See `api_host` for more information.
 
 ### `keys.private_key`
 
-Required.
+Required for some API operations.
 Your ZiftrPAY API Private Key from the
 [ZiftrPAY account info](https://www.ziftrpay.com/merchants/sandbox/info/) page.
 
