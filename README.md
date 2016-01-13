@@ -100,6 +100,7 @@ The hostname of the api endpoint:
 
 ## Links
 
+* [Ziftr API package on AtmosphereJS.com](https://atmospherejs.com/ziftr/ziftr-api)
 * [Ziftr API package for MeteorJS on Github](https://github.com/Ziftr/ziftr-api-client-meteorjs/)
 * [Ziftr website](http://www.ziftr.com/)
 * [ZiftrPAY website](http://www.ziftrpay.com/)
